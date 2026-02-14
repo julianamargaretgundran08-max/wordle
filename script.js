@@ -1,39 +1,26 @@
-// --- 1. CONFIGURATION ---
-const PUBLIC_KEY = "JKqFqwhz7D98snEv6"; 
-const SERVICE_ID = "service_deqbac8";
-const TEMPLATE_ID = "template_nef26y9";
+// At the very top of script.js
+(function() {
+    // Wait for the EmailJS SDK to load from the CDN
+    const checkEmailJS = setInterval(() => {
+        if (window.emailjs) {
+            emailjs.init("JKqFqwhz7D98snEv6");
+            console.log("EmailJS Initialized Successfully!");
+            clearInterval(checkEmailJS);
+        }
+    }, 100);
+})();
 
-// Initialize EmailJS
-emailjs.init(PUBLIC_KEY);
-
-// --- 2. THE SEND FUNCTION ---
 function sendTheEmail() {
-    console.log("Attempting to send email...");
-
-    // Your requested line with added error handling
-    emailjs.send(SERVICE_ID, TEMPLATE_ID, {
-        to_name: "Jolie", // This helps the template recognize a recipient
-        message: "The Wordle was completed successfully!"
+    console.log("Button clicked, sending email...");
+    
+    // Using your exact requested IDs
+    emailjs.send("service_deqbac8", "template_nef26y9")
+    .then((res) => {
+        console.log("Success from GitHub!", res.status);
     })
-    .then((response) => {
-        console.log("SUCCESS!", response.status, response.text);
-    })
-    .catch((error) => {
-        console.error("FAILED TO SEND:", error);
-        // This alert is for YOU to see the error while testing
-        alert("Email failed: " + JSON.stringify(error));
+    .catch((err) => {
+        // This will now catch any 'Public Website' security blocks
+        console.error("GitHub Send Error:", err);
+        alert("Email failed: " + err.text); 
     });
-}
-
-// --- 3. TRIGGER IN THE GAME ---
-function showFinalScreen() {
-    // We call your command here
-    sendTheEmail();
-
-    document.getElementById("game-container").style.opacity = "0";
-    setTimeout(() => {
-        document.getElementById("game-container").style.display = "none";
-        document.getElementById("final-screen").style.display = "flex";
-        document.getElementById("signature").innerText = "- Yours Truly"; 
-    }, 500);
 }
